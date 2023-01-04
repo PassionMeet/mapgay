@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cmfunc/jipeng/db"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,13 +14,14 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
+	Openid string `json:"openid"`
 }
 
 type WxLoginResponse struct {
 	SessionKey string `json:"session_key"` //会话密钥
 	Unionid    string `json:"unionid"`     //用户在开放平台唯一标识符
 	Errmsg     string `json:"errmsg"`      //错误信息
-	Ppenid     string `json:"openid"`      //用户唯一标识
+	Openid     string `json:"openid"`      //用户唯一标识
 	Errcode    int32  `json:"errcode"`     //错误码
 }
 
@@ -66,8 +68,15 @@ func Login(ctx *gin.Context) {
 	}
 
 	// 存储sessionKey和openid
-	// 是否获取用户手机号，暂时不考虑
+	_, err = db.InsertUsers(ctx, &db.UsersRow{
+		Openid:     wxsession.Openid,
+		SessionKey: wxsession.SessionKey,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
-	ctx.JSON(http.StatusOK, wxsession)
+	ctx.JSON(http.StatusOK, &LoginResponse{Openid: wxsession.Openid})
 
 }

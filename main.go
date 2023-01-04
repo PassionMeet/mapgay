@@ -11,10 +11,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/cmfunc/jipeng/db"
+	"github.com/cmfunc/jipeng/mq"
 	"github.com/cmfunc/jipeng/router"
 )
 
 func main() {
+	db.Init()
+	mq.Init()
+
 	engine := gin.Default()
 	router.Inject(engine)
 	srv := &http.Server{
