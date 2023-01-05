@@ -2,6 +2,7 @@ package model
 
 type UploadGeoRequest struct {
 	Openid             string  `json:"openid"`
+	UploadTs           int64   `json:"upload_ts"`
 	Latitude           float64 `json:"latitude"`  //纬度
 	Longitude          float64 `json:"longitude"` //经度
 	Speed              int32   `json:"speed"`     //速度m/s

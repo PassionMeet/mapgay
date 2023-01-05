@@ -3,10 +3,12 @@ package mq
 import (
 	"context"
 	"encoding/json"
+	"time"
 
-	"github.com/cmfunc/jipeng/cache"
+	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/model"
 	"github.com/nsqio/go-nsq"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var consumer *nsq.Consumer
@@ -20,8 +22,26 @@ func (h *userGeo_matchMan_MessageHandler) HandleMessage(message *nsq.Message) er
 		return err
 	}
 
-	// 保存至redis
-	_, err = cache.AddGeoPool(context.TODO(), &msgBody)
+	ctx := context.Background()
+	// 保存到mongo
+	document := bson.D{
+		{
+			Key: "location",
+			Value: bson.D{
+				{Key: "type", Value: "Point"},
+				{Key: "coordinates", Value: bson.A{msgBody.Longitude, msgBody.Latitude}},
+			},
+		},
+		{
+			Key:   "openid",
+			Value: msgBody.Openid,
+		},
+		{
+			Key:   "upload_ts",
+			Value: time.Now().UnixMilli(), //TODO 替换为前端记录的事件
+		},
+	}
+	err = db.InsertUsersGeo(ctx, document)
 
 	return err
 }
@@ -34,7 +54,7 @@ func InitConsumer() {
 		panic(err)
 	}
 	consumer.AddConcurrentHandlers(&userGeo_matchMan_MessageHandler{}, 10)
-	err = consumer.ConnectToNSQLookupd("127.0.0.1:4161")
+	err = consumer.ConnectToNSQD("127.0.0.1:4150")
 	if err != nil {
 		panic(err)
 	}

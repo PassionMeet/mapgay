@@ -17,7 +17,8 @@ import (
 )
 
 func main() {
-	db.Init()
+	db.InitMySQL()
+	db.InitMongo()
 	mq.Init()
 
 	engine := gin.Default()

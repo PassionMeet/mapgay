@@ -20,15 +20,6 @@ type UploadGeoRequest struct {
 	HorizontalAccuracy int32   `json:"horizontalAccuracy"` //水平精度
 }
 
-// 抽象http接口逻辑处理
-type Handle interface {
-	Param(ctx *gin.Context) (interface{}, error)
-	Service(interface {
-		User()
-	})
-	Resp(interface{})
-}
-
 func UploadGeo(ctx *gin.Context) {
 	param := UploadGeoRequest{}
 	err := ctx.ShouldBindJSON(&param)
@@ -52,4 +43,27 @@ func UploadGeo(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, nil)
 
+}
+
+type GetUsersByGeoParam struct {
+	Openid    string  `form:"openid"`
+	Latitude  float64 `form:"latitude"`
+	Longitude float64 `form:"longitude"`
+}
+
+type GetUsersByGeoResp_Item struct {
+	// 和微信小程序map组建里的marker保持相似
+}
+
+type GetUsersByGeoResp struct {
+	List []*GetUsersByGeoResp_Item `json:"list"`
+}
+
+func GetUsersByGeo(ctx *gin.Context) {
+	// 通过geo信息筛选出当前地图中所有用户
+
+	// 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
+
+	// TODO 考虑做后期离线计算
+	// TODO 考虑用户标记自己所在的大范围，只收集在同一个大范围内的用户，并异步做匹配值计算任务
 }
