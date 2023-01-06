@@ -41,8 +41,13 @@ func (h *userGeo_matchMan_MessageHandler) HandleMessage(message *nsq.Message) er
 			Value: time.Now().UnixMilli(), //TODO 替换为前端记录的事件
 		},
 	}
+	// 用户所有轨迹
 	err = db.InsertUsersGeo(ctx, document)
-
+	if err != nil {
+		return err
+	}
+	// 用户当前最新轨迹（每个用户只有当前最新的记录）
+	err = db.InsertUserCurrentGeo(ctx, msgBody.Openid, msgBody.Longitude, msgBody.Latitude)
 	return err
 }
 

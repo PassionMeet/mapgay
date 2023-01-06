@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/mq"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type UploadGeoRequest struct {
@@ -49,6 +51,7 @@ type GetUsersByGeoParam struct {
 	Openid    string  `form:"openid"`
 	Latitude  float64 `form:"latitude"`
 	Longitude float64 `form:"longitude"`
+	Distance  float64 `form:"distance"` //中心点，多少米范围内
 }
 
 type GetUsersByGeoResp_Item struct {
@@ -60,10 +63,36 @@ type GetUsersByGeoResp struct {
 }
 
 func GetUsersByGeo(ctx *gin.Context) {
-	// 通过geo信息筛选出当前地图中所有用户
+	param := GetUsersByGeoParam{}
+	err := ctx.ShouldBind(&param)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, nil)
+		return
+	}
 
+	// 通过geo信息筛选出当前地图中所有用户
+	// TODO 时间筛选
+	filter := bson.D{
+		{Key: "location", Value: bson.D{
+			{Key: "$nearSphere", Value: bson.D{
+				{Key: "$geometry", Value: bson.D{
+					{Key: "type", Value: "Point"},
+					{Key: "coordinates", Value: []float64{param.Longitude, param.Latitude}},
+					{Key: "$maxDistance", Value: param.Distance},
+				},
+				}},
+			}},
+		},
+	}
+
+	documents, err := db.SearchUsersByGeo(ctx, filter)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 	// 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
 
 	// TODO 考虑做后期离线计算
 	// TODO 考虑用户标记自己所在的大范围，只收集在同一个大范围内的用户，并异步做匹配值计算任务
+	ctx.JSON(http.StatusOK, documents)
 }
