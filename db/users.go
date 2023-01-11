@@ -17,9 +17,13 @@ type UsersRow struct {
 }
 
 func InsertUsers(ctx context.Context, rows *UsersRow) (sql.Result, error) {
-	return sq.Insert(UsersTable).
+	query, args, err := sq.Insert(UsersTable).
 		Columns("openid,session_key").
 		Values(rows.Openid, rows.SessionKey).
-		RunWith(db).
-		ExecContext(ctx)
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+	query = query + " ON DUPLICATE KEY UPDATE openid=values(openid), session_key=values(session_key)"
+	return mysqlCli.ExecContext(ctx, query, args...)
 }

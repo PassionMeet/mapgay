@@ -7,18 +7,18 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+var mysqlCli *sql.DB
 
 func InitMySQL() {
 	var err error
-	db, err = sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/jipeng")
+	mysqlCli, err = sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/jipeng")
 	if err != nil {
 		panic(err)
 	}
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-	err = db.Ping()
+	mysqlCli.SetConnMaxLifetime(time.Minute * 3)
+	mysqlCli.SetMaxOpenConns(10)
+	mysqlCli.SetMaxIdleConns(10)
+	err = mysqlCli.Ping()
 	if err != nil {
 		panic(err)
 	}
