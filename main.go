@@ -11,12 +11,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/cmfunc/jipeng/conf"
 	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/mq"
 	"github.com/cmfunc/jipeng/router"
 )
 
 func main() {
+	conf.ParseJipengConf()
 	db.InitMySQL()
 	db.InitMongo()
 	mq.Init()
