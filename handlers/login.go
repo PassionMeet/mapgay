@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/cmfunc/jipeng/cache"
 	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/wx"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,14 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
+	// 缓存sessionKey和openid
+	_, err = cache.SetUserSession(ctx, wxsession.Openid, wxsession.SessionKey)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
+	// 登陆成功以后，前端接受到openid和sessionkey需要在请求时写入header中，并由中间件获取校验
 	ctx.JSON(http.StatusOK, &LoginResponse{Openid: wxsession.Openid})
 
 }
