@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/cmfunc/jipeng/cache"
 	"github.com/cmfunc/jipeng/conf"
 	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/mq"
@@ -20,6 +21,7 @@ import (
 
 func main() {
 	conf.ParseJipengConf()
+	cache.Init(conf.Get().Redis)
 	db.InitMySQL(conf.Get().MySQL)
 	db.InitMongo(conf.Get().MongoDB)
 	mq.Init(conf.Get().NSQ)
