@@ -3,8 +3,10 @@ package mq
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
+	"github.com/cmfunc/jipeng/conf"
 	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/model"
 	"github.com/nsqio/go-nsq"
@@ -51,15 +53,16 @@ func (h *userGeo_matchMan_MessageHandler) HandleMessage(message *nsq.Message) er
 	return err
 }
 
-func InitConsumer() {
+func InitConsumer(cfg *conf.NSQ_Consumer) {
 	nsqConf := nsq.NewConfig()
 	var err error
-	consumer, err = nsq.NewConsumer("user_geo", "match_man", nsqConf)
+	consumer, err = nsq.NewConsumer(cfg.Topic, cfg.Channel, nsqConf)
 	if err != nil {
 		panic(err)
 	}
 	consumer.AddConcurrentHandlers(&userGeo_matchMan_MessageHandler{}, 10)
-	err = consumer.ConnectToNSQD("127.0.0.1:4150")
+	uri := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	err = consumer.ConnectToNSQD(uri)
 	if err != nil {
 		panic(err)
 	}

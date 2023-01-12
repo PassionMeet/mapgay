@@ -8,27 +8,57 @@ import (
 
 var _config = Config{}
 
+func Get() *Config {
+	return &_config
+}
+
 type Server struct {
-	Host string
-	Port int
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
+type MySQL struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DB       string `yaml:"db"`
+}
+
+type MongoDB struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
+type Wx struct {
+	AppID     string `yaml:"AppID"`
+	AppSecret string `yaml:"AppSecret"`
+}
+
+type Redis struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+	Auth string `yaml:"auth"`
+}
+
+type NSQ_Consumer struct {
+	Host    string `yaml:"host"`
+	Port    int    `yaml:"port"`
+	Topic   string `yaml:"topic"`
+	Channel string `yaml:"channel"`
+}
+
+type NSQ struct {
+	Producer *Server       `yaml:"producer"`
+	Consumer *NSQ_Consumer `yaml:"consumer"`
 }
 
 type Config struct {
-	Wx struct {
-	} `yaml:"wx"`
-	MySQL struct {
-		Server   `yaml:"server"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
-	} `yaml:"my_sql"`
-	Redis struct {
-		Server `yaml:"server"`
-		Auth   string `yaml:"auth"`
-	} `yaml:"redis"`
-	NSQ struct {
-		Producer []Server `yaml:"producer"`
-		Consumer []Server `yaml:"consumer"`
-	} `yaml:"nsq"`
+	Wx      *Wx      `yaml:"wx"`
+	MySQL   *MySQL   `yaml:"mysql"`
+	MongoDB *MongoDB `yaml:"mongodb"`
+	Redis   *Redis   `yaml:"redis"`
+	NSQ     *NSQ     `yaml:"nsq"`
 }
 
 func ParseJipengConf() {

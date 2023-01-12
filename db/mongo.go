@@ -2,7 +2,9 @@ package db
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/cmfunc/jipeng/conf"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -14,8 +16,8 @@ func Disconnect(ctx context.Context) {
 }
 
 // mongo中存储用户的位置信息
-func InitMongo() {
-	uri := "mongodb://localhost:27017"
+func InitMongo(cfg *conf.MongoDB) {
+	uri := fmt.Sprintf("mongodb://%s:%d", cfg.Host, cfg.Port)
 	var err error
 	mongoCli, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
