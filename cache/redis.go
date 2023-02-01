@@ -14,7 +14,7 @@ func Init(cfg *conf.Redis) {
 	addr:=fmt.Sprintf("%s:%d",cfg.Host,cfg.Port)
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     addr,
-		Password: cfg.Auth,
+		// Password: cfg.Auth,
 		DB:       0,
 	})
 	pong, err := redisClient.Ping(context.TODO()).Result()

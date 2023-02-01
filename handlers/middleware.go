@@ -9,14 +9,14 @@ import (
 
 // AuthMidd 身份认证中间件
 func AuthMidd(ctx *gin.Context) {
-	userid := ctx.GetHeader("userid")
+	openid := ctx.GetHeader("openid")
 	sessionKey := ctx.GetHeader("sessionKey")
-	if userid == "" || sessionKey == "" {
+	if openid == "" || sessionKey == "" {
 		ctx.JSON(http.StatusBadRequest, nil)
 		ctx.Abort()
 		return
 	}
-	cacheSessionKey, err := cache.GetUserSession(ctx, userid)
+	cacheSessionKey, err := cache.GetUserSession(ctx, openid)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, nil)
 		ctx.Abort()
@@ -28,4 +28,7 @@ func AuthMidd(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
+
+	// 设置ctx中openid
+	ctx.Set("openid", openid)
 }

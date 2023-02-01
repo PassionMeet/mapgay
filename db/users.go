@@ -27,3 +27,8 @@ func InsertUsers(ctx context.Context, rows *UsersRow) (sql.Result, error) {
 	query = query + " ON DUPLICATE KEY UPDATE openid=values(openid), session_key=values(session_key)"
 	return mysqlCli.ExecContext(ctx, query, args...)
 }
+
+func UpdateUser(ctx context.Context, where interface{}, update sq.Eq) error {
+	_, err := sq.Update(UsersTable).SetMap(update).Where(where).RunWith(mysqlCli).ExecContext(ctx)
+	return err
+}

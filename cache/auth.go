@@ -10,7 +10,8 @@ const (
 )
 
 func GetUserSession(ctx context.Context, userid string) (sessionKey string, err error) {
-	return redisClient.Get(ctx, userid).Result()
+	key := fmt.Sprintf(KeyPrefix_UserSessionKey, userid)
+	return redisClient.Get(ctx, key).Result()
 }
 
 func SetUserSession(ctx context.Context, userid string, sessionKey string) (string, error) {

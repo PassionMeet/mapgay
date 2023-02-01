@@ -7,7 +7,7 @@ import (
 
 func v1Router(g *gin.RouterGroup) {
 	g.POST("/login", handlers.Login)              //login
-	g.Use()
+	g.Use(handlers.AuthMidd)                      //auth middleware
 	g.POST("/geo", handlers.UploadGeo)            //upload user's geo location
 	g.GET("/users/geo", handlers.GetUsersByGeo)   //get users by geo
 	g.POST("/user/info", handlers.UploadUserinfo) //upload user self userinfo
