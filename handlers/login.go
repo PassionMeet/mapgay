@@ -14,7 +14,8 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Openid string `json:"openid"`
+	Openid     string `json:"openid"`
+	SessionKey string `json:"sessionKey"`
 }
 
 // Login 登陆
@@ -49,6 +50,6 @@ func Login(ctx *gin.Context) {
 	}
 
 	// 登陆成功以后，前端接受到openid和sessionkey需要在请求时写入header中，并由中间件获取校验
-	ctx.JSON(http.StatusOK, &LoginResponse{Openid: wxsession.Openid})
+	ctx.JSON(http.StatusOK, &LoginResponse{Openid: wxsession.Openid, SessionKey: wxsession.SessionKey})
 
 }
