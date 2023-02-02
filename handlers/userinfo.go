@@ -11,7 +11,7 @@ import (
 
 type UploadUserinfoRequest struct {
 	Nickname string `json:"nickname"`
-	Avator   string `json:"avator"`
+	Avatar   string `json:"avatar"`
 	Feature  string `json:"feature"`
 	WeixinID string `json:"weixinID"`
 }
@@ -32,8 +32,8 @@ func UploadUserinfo(ctx *gin.Context) {
 	if param.Nickname != "" {
 		update["username"] = param.Nickname
 	}
-	if param.Avator != "" {
-		update["avatar"] = param.Avator
+	if param.Avatar != "" {
+		update["avatar"] = param.Avatar
 	}
 	if param.Feature != "" {
 		features := strings.Split(param.Feature, ".")

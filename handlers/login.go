@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/cmfunc/jipeng/cache"
@@ -16,6 +17,7 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Openid     string `json:"openid"`
 	SessionKey string `json:"sessionKey"`
+	Userinfo
 }
 
 // Login 登陆
@@ -49,8 +51,24 @@ func Login(ctx *gin.Context) {
 		return
 	}
 	// 查询用户信息
-
+	userRow, err := db.GetUser(ctx, wxsession.Openid)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 	// 登陆成功以后，前端接受到openid和sessionkey需要在请求时写入header中，并由中间件获取校验
-	ctx.JSON(http.StatusOK, &LoginResponse{Openid: wxsession.Openid, SessionKey: wxsession.SessionKey})
+	resp := &LoginResponse{
+		Openid:     wxsession.Openid,
+		SessionKey: wxsession.SessionKey,
+		Userinfo: Userinfo{
+			Nickname: userRow.Username,
+			Avatar:   userRow.Avatar,
+			WeixinID: userRow.WeixinID,
+		},
+	}
+	if userRow.Height > 0 && userRow.Weight > 0 && userRow.Age > 0 && userRow.Length > 0 {
+		resp.Feature = fmt.Sprintf("%d.%d.%d.%d", userRow.Height, userRow.Weight, userRow.Age, userRow.Length)
+	}
+	ctx.JSON(http.StatusOK, resp)
 
 }
