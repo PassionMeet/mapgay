@@ -30,6 +30,7 @@ func UploadGeo(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
+	param.Openid=ctx.GetString("openid")
 	// 位置信息发送到nsq
 	// nsq消费者单独处理
 
@@ -60,7 +61,7 @@ type GetUsersByGeoResp_Item struct {
 	Longitude float64 `json:"longitude"`
 	Avatar    string  `json:"avatar"`
 	Feature   string  `json:"feature"`
-	WeixinID  string  `json:"weixin_id"`
+	WeixinID  string  `json:"weixinID"`
 }
 
 type GetUsersByGeoResp struct {
