@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/cmfunc/jipeng/db"
@@ -48,7 +49,6 @@ func UploadGeo(ctx *gin.Context) {
 }
 
 type GetUsersByGeoParam struct {
-	Openid    string  `form:"openid"`
 	Latitude  float64 `form:"latitude"`
 	Longitude float64 `form:"longitude"`
 	Distance  float64 `form:"distance"` //中心点，多少米范围内
@@ -56,6 +56,11 @@ type GetUsersByGeoParam struct {
 
 type GetUsersByGeoResp_Item struct {
 	// 和微信小程序map组建里的marker保持相似
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Avatar    string  `json:"avatar"`
+	Feature   string  `json:"feature"`
+	WeixinID  string  `json:"weixin_id"`
 }
 
 type GetUsersByGeoResp struct {
@@ -90,9 +95,29 @@ func GetUsersByGeo(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
-	// 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
 
+	// 查询用户信息
+	data := make([]*GetUsersByGeoResp_Item, 0)
+	for _, doc := range documents {
+		userRow, err := db.GetUser(ctx, doc.Openid)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, nil)
+			return
+		}
+		tmp := &GetUsersByGeoResp_Item{
+			Latitude:  doc.Location.Coordinates[1],
+			Longitude: doc.Location.Coordinates[0],
+			Avatar:    userRow.Avatar,
+			WeixinID:  userRow.WeixinID,
+		}
+		if userRow.Height > 0 && userRow.Weight > 0 && userRow.Age > 0 && userRow.Length > 0 {
+			tmp.Feature = fmt.Sprintf("%d.%d.%d.%d", userRow.Height, userRow.Weight, userRow.Age, userRow.Length)
+		}
+		data = append(data, tmp)
+	}
+
+	// TODO 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
 	// TODO 考虑做后期离线计算
 	// TODO 考虑用户标记自己所在的大范围，只收集在同一个大范围内的用户，并异步做匹配值计算任务
-	ctx.JSON(http.StatusOK, documents)
+	ctx.JSON(http.StatusOK, NewResp(Success, data))
 }

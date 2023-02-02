@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 )
@@ -12,8 +13,17 @@ const (
 )
 
 type UsersRow struct {
-	Openid     string
-	SessionKey string
+	ID           uint64
+	Openid       string
+	SessionKey   string
+	RegisterTime time.Time
+	Username     string
+	Avatar       string
+	Height       uint32
+	Weight       uint32
+	Age          uint32
+	Length       uint32
+	WeixinID     string
 }
 
 func InsertUsers(ctx context.Context, rows *UsersRow) (sql.Result, error) {
@@ -31,4 +41,13 @@ func InsertUsers(ctx context.Context, rows *UsersRow) (sql.Result, error) {
 func UpdateUser(ctx context.Context, where interface{}, update sq.Eq) error {
 	_, err := sq.Update(UsersTable).SetMap(update).Where(where).RunWith(mysqlCli).ExecContext(ctx)
 	return err
+}
+
+func GetUser(ctx context.Context, openid string) (UsersRow, error) {
+	row := UsersRow{}
+	err := sq.Select("username,avatar,height,weight,age,length,weixin_id").
+		From(UsersTable).Where(sq.Eq{"openid": openid}).
+		RunWith(mysqlCli).QueryRowContext(ctx).
+		Scan(&row.Username, &row.Avatar, &row.Height, &row.Weight, &row.Age, &row.Length, &row.WeixinID)
+	return row, err
 }

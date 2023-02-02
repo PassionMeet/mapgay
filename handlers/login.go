@@ -48,6 +48,7 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
+	// 查询用户信息
 
 	// 登陆成功以后，前端接受到openid和sessionkey需要在请求时写入header中，并由中间件获取校验
 	ctx.JSON(http.StatusOK, &LoginResponse{Openid: wxsession.Openid, SessionKey: wxsession.SessionKey})

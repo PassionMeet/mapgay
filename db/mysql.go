@@ -13,7 +13,7 @@ var mysqlCli *sql.DB
 
 func InitMySQL(cfg *conf.MySQL) {
 	var err error
-	var uri = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+	var uri = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local",
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)
 	mysqlCli, err = sql.Open("mysql", uri)
 	if err != nil {
