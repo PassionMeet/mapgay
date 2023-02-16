@@ -31,7 +31,7 @@ type WxLoginResponse struct {
 	Errcode    int32  `json:"errcode"`     //错误码
 }
 
-func Login(ctx context.Context, code string) (*WxLoginResponse, error) {
+func Login(ctx context.Context, _conf conf.Wx, code string) (*WxLoginResponse, error) {
 	// wx login
 
 	client := http.Client{
@@ -42,8 +42,8 @@ func Login(ctx context.Context, code string) (*WxLoginResponse, error) {
 		return nil, err
 	}
 	query := req.URL.Query()
-	query.Add("appid", "wx9f7bd3e49f313011")
-	query.Add("secret", "1674a41dbdd345548f74d8e879aafe51")
+	query.Add("appid", _conf.AppID)
+	query.Add("secret", _conf.AppSecret)
 	query.Add("js_code", code)
 	query.Add("grant_type", "authorization_code")
 	req.URL.RawQuery = query.Encode()

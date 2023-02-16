@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/cmfunc/jipeng/cache"
+	"github.com/cmfunc/jipeng/conf"
 	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/wx"
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	wxsession, err := wx.Login(ctx, param.Code)
+	wxsession, err := wx.Login(ctx, *conf.Get().Wx, param.Code)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
