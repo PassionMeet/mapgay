@@ -34,10 +34,17 @@ type Redis struct {
 	Auth string `yaml:"auth"`
 }
 
+type Cos struct {
+	Url       string `yaml:"url"`
+	SecretID  string `yaml:"secret_id"`
+	SecretKey string `yaml:"secret_key"`
+}
+
 type Config struct {
 	Wx    *Wx    `yaml:"wx"`
 	MySQL *MySQL `yaml:"mysql"`
 	Redis *Redis `yaml:"redis"`
+	Cos   *Cos   `yaml:"cos"`
 }
 
 func ParseJipengConf() {
