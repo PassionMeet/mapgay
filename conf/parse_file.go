@@ -25,11 +25,6 @@ type MySQL struct {
 	DB       string `yaml:"db"`
 }
 
-type MongoDB struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
-}
-
 type Wx struct {
 	AppID     string `yaml:"AppID"`
 	AppSecret string `yaml:"AppSecret"`
@@ -41,24 +36,10 @@ type Redis struct {
 	Auth string `yaml:"auth"`
 }
 
-type NSQ_Consumer struct {
-	Host    string `yaml:"host"`
-	Port    int    `yaml:"port"`
-	Topic   string `yaml:"topic"`
-	Channel string `yaml:"channel"`
-}
-
-type NSQ struct {
-	Producer *Server       `yaml:"producer"`
-	Consumer *NSQ_Consumer `yaml:"consumer"`
-}
-
 type Config struct {
-	Wx      *Wx      `yaml:"wx"`
-	MySQL   *MySQL   `yaml:"mysql"`
-	MongoDB *MongoDB `yaml:"mongodb"`
-	Redis   *Redis   `yaml:"redis"`
-	NSQ     *NSQ     `yaml:"nsq"`
+	Wx    *Wx    `yaml:"wx"`
+	MySQL *MySQL `yaml:"mysql"`
+	Redis *Redis `yaml:"redis"`
 }
 
 func ParseJipengConf() {

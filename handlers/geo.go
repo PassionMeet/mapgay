@@ -2,13 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/cmfunc/jipeng/db"
-	"github.com/cmfunc/jipeng/mq"
+	"github.com/cmfunc/jipeng/cache"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type UploadGeoRequest struct {
@@ -30,7 +28,7 @@ func UploadGeo(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
-	param.Openid=ctx.GetString("openid")
+	param.Openid = ctx.GetString("openid")
 	// 位置信息发送到nsq
 	// nsq消费者单独处理
 
@@ -39,7 +37,13 @@ func UploadGeo(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
-	err = mq.PubUserGeo(body)
+	// 保存位置信息
+	log.Printf("UploadGeo %+v", body)
+	err = cache.AddUserGeo(ctx, &cache.UserGeo{
+		Openid:    param.Openid,
+		Latitude:  param.Latitude,
+		Longitude: param.Longitude,
+	})
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
@@ -78,47 +82,11 @@ func GetUsersByGeo(ctx *gin.Context) {
 
 	// 通过geo信息筛选出当前地图中所有用户
 	// TODO 时间筛选
-	filter := bson.D{
-		{Key: "location", Value: bson.D{
-			{Key: "$nearSphere", Value: bson.D{
-				{Key: "$geometry", Value: bson.D{
-					{Key: "type", Value: "Point"},
-					{Key: "coordinates", Value: []float64{param.Longitude, param.Latitude}},
-					{Key: "$maxDistance", Value: param.Distance},
-				},
-				}},
-			}},
-		},
-	}
-
-	documents, err := db.SearchUsersByGeo(ctx, filter)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, nil)
-		return
-	}
 
 	// 查询用户信息
-	data := make([]*GetUsersByGeoResp_Item, 0)
-	for _, doc := range documents {
-		userRow, err := db.GetUser(ctx, doc.Openid)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, nil)
-			return
-		}
-		tmp := &GetUsersByGeoResp_Item{
-			Latitude:  doc.Location.Coordinates[1],
-			Longitude: doc.Location.Coordinates[0],
-			Avatar:    userRow.Avatar,
-			WeixinID:  userRow.WeixinID,
-		}
-		if userRow.Height > 0 && userRow.Weight > 0 && userRow.Age > 0 && userRow.Length > 0 {
-			tmp.Feature = fmt.Sprintf("%d.%d.%d.%d", userRow.Height, userRow.Weight, userRow.Age, userRow.Length)
-		}
-		data = append(data, tmp)
-	}
 
 	// TODO 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
 	// TODO 考虑做后期离线计算
 	// TODO 考虑用户标记自己所在的大范围，只收集在同一个大范围内的用户，并异步做匹配值计算任务
-	ctx.JSON(http.StatusOK, NewResp(Success, data))
+	ctx.JSON(http.StatusOK, nil)
 }

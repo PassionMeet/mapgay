@@ -35,7 +35,6 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
-	// TODO 发送用户的登录事件到mq，由单独服务记录用户的登录行为
 	// 存储sessionKey和openid
 	_, err = db.InsertUsers(ctx, &db.UsersRow{
 		Openid:     wxsession.Openid,

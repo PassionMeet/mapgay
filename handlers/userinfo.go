@@ -32,9 +32,6 @@ func UploadUserinfo(ctx *gin.Context) {
 	if param.Nickname != "" {
 		update["username"] = param.Nickname
 	}
-	if param.Avatar != "" {
-		update["avatar"] = param.Avatar
-	}
 	if param.Feature != "" {
 		features := strings.Split(param.Feature, ".")
 		if len(features) != 4 {

@@ -13,16 +13,6 @@ const (
 	url = "https://api.weixin.qq.com/sns/jscode2session"
 )
 
-var _wx = &conf.Wx{}
-
-func Set(cfg *conf.Wx) {
-	_wx = cfg
-}
-
-func Get() *conf.Wx {
-	return _wx
-}
-
 type WxLoginResponse struct {
 	SessionKey string `json:"session_key"` //会话密钥
 	Unionid    string `json:"unionid"`     //用户在开放平台唯一标识符
