@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/cmfunc/jipeng/cache"
+	"github.com/cmfunc/jipeng/db"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,7 +40,7 @@ func UploadGeo(ctx *gin.Context) {
 		return
 	}
 	// 保存位置信息
-	log.Printf("UploadGeo %+v", body)
+	log.Printf("UploadGeo %+v", string(body))
 	err = cache.AddUserGeo(ctx, &cache.UserGeo{
 		Openid:    param.Openid,
 		Latitude:  param.Latitude,
@@ -79,12 +81,43 @@ func GetUsersByGeo(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
-
+	openid := ctx.Query("openid")
 	// 通过geo信息筛选出当前地图中所有用户
 	// TODO 时间筛选
-
+	filter := &cache.GeoFilter{
+		Openid: openid,
+	}
+	usergeos, err := cache.GetUsersByGeo(ctx, filter)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 	// 查询用户信息
+	openids := make([]string, 0)
+	for openid, _ := range usergeos {
+		openids = append(openids, openid)
+	}
+	userinfos, err := db.GetUsers(ctx, openids)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
+	resp := GetUsersByGeoResp{
+		List: []*GetUsersByGeoResp_Item{},
+	}
+	for openid, geo := range usergeos {
+		uinfo := userinfos[openid]
+		feature := fmt.Sprintf("%d.%d.%d.%d", uinfo.Height, uinfo.Weight, uinfo.Age, uinfo.Length)
+		item := &GetUsersByGeoResp_Item{
+			Latitude:  geo.Latitude,
+			Longitude: geo.Longitude,
+			Avatar:    uinfo.Avatar,
+			Feature:   feature,
+			WeixinID:  uinfo.WeixinID,
+		}
+		resp.List = append(resp.List, item)
+	}
 	// TODO 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
 	// TODO 考虑做后期离线计算
 	// TODO 考虑用户标记自己所在的大范围，只收集在同一个大范围内的用户，并异步做匹配值计算任务

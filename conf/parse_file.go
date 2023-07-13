@@ -1,8 +1,6 @@
 package conf
 
 import (
-	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -55,5 +53,4 @@ func ParseJipengConf() {
 		panic(err)
 	}
 
-	fmt.Println(_config)
 }

@@ -3,6 +3,8 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -39,9 +41,27 @@ func UpdateUser(ctx context.Context, where interface{}, update sq.Eq) error {
 func GetUser(ctx context.Context, openid string) (*UsersRow, error) {
 	row := &UsersRow{}
 	query := `select username,avatar,height,weight,age,length,weixin_id from users where openid = ?`
-	err := mysqlCli.QueryRowContext(ctx, query, openid).Scan(row.Username, row.Avatar, row.Height, row.Weight, row.Age, row.Length, row.WeixinID)
+	err := mysqlCli.QueryRowContext(ctx, query, openid).Scan(&row.Username, &row.Avatar, &row.Height, &row.Weight, &row.Age, &row.Length, &row.WeixinID)
 	if err != nil {
 		return nil, err
 	}
 	return row, nil
+}
+
+func GetUsers(ctx context.Context, openids []string) (users map[string]*UsersRow, err error) {
+	query := fmt.Sprintf(`select openid,username,avatar,height,weight,age,length,weixin_id from users where openid in (%s)`, strings.Join(openids, ","))
+	rows, err := mysqlCli.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	users = make(map[string]*UsersRow, 0)
+	for rows.Next() {
+		row := &UsersRow{}
+		err = rows.Scan(&row.Openid, &row.Username, &row.Avatar, &row.Height, &row.Weight, &row.Age, &row.Length, &row.WeixinID)
+		if err != nil {
+			return nil, err
+		}
+		users[row.Openid] = row
+	}
+	return users, nil
 }
