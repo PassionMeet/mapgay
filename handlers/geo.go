@@ -78,7 +78,7 @@ func GetUsersByGeo(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
-	openid := ctx.Query("openid")
+	openid := ctx.GetString("openid")
 	// 通过geo信息筛选出当前地图中所有用户
 	// TODO 时间筛选
 	filter := &cache.GeoFilter{
