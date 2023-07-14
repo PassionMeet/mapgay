@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/pkg/errors"
 )
 
 type UserGeo struct {
@@ -52,7 +53,7 @@ func GetUsersByGeo(ctx context.Context, filter *GeoFilter) (usergeos map[string]
 	}
 	users, err := redisClient.GeoRadiusByMember(ctx, UserGeoKeyPrefix, filter.Openid, query).Result()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "GetUsersByGeo filter:%+v", filter)
 	}
 	usergeos = make(map[string]*CacheUserGeo, 0)
 	for _, user := range users {

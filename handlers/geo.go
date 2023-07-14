@@ -86,6 +86,7 @@ func GetUsersByGeo(ctx *gin.Context) {
 	}
 	usergeos, err := cache.GetUsersByGeo(ctx, filter)
 	if err != nil {
+		log.Printf("GetUsersByGeo cache.GetUsersByGeo filter:%+v %s", filter, err)
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -96,6 +97,7 @@ func GetUsersByGeo(ctx *gin.Context) {
 	}
 	userinfos, err := db.GetUsers(ctx, openids)
 	if err != nil {
+		log.Printf("GetUsersByGeo db.GetUsers openids:%+v %s", openids, err)
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
