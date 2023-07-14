@@ -78,6 +78,7 @@ func GetUsersByGeo(ctx *gin.Context) {
 	param := GetUsersByGeoParam{}
 	err := ctx.ShouldBind(&param)
 	if err != nil {
+		log.Printf("GetUsersByGeo param:%+v %s", param, err)
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
