@@ -15,11 +15,11 @@ type UploadGeoRequest struct {
 	Latitude           float64 `json:"latitude"`  //纬度
 	Longitude          float64 `json:"longitude"` //经度
 	Speed              int32   `json:"speed"`     //速度m/s
-	Accuracy           int32   `json:"accuracy"`  //位置精确度
-	Altitude           int32   `json:"altitude"`  //高度m
+	Accuracy           float64 `json:"accuracy"`  //位置精确度
+	Altitude           float64 `json:"altitude"`  //高度m
 	ErrMsg             string  `json:"err_msg"`
-	VerticalAccuracy   int32   `json:"verticalAccuracy"`   //垂直精度m
-	HorizontalAccuracy int32   `json:"horizontalAccuracy"` //水平精度
+	VerticalAccuracy   float64 `json:"verticalAccuracy"`   //垂直精度m
+	HorizontalAccuracy float64 `json:"horizontalAccuracy"` //水平精度
 }
 
 func UploadGeo(ctx *gin.Context) {
