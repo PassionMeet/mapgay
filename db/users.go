@@ -8,6 +8,7 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -35,7 +36,11 @@ func InsertUsers(ctx context.Context, rows *UsersRow) (sql.Result, error) {
 
 func UpdateUser(ctx context.Context, where interface{}, update sq.Eq) error {
 	_, err := sq.Update(UsersTable).SetMap(update).Where(where).RunWith(mysqlCli).ExecContext(ctx)
-	return err
+	if err != nil {
+		err = errors.Wrapf(err, "UpdateUser where:%+v update:%+v", where, update)
+		return err
+	}
+	return nil
 }
 
 func GetUser(ctx context.Context, openid string) (*UsersRow, error) {
