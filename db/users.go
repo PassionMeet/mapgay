@@ -55,6 +55,9 @@ func GetUser(ctx context.Context, openid string) (*UsersRow, error) {
 }
 
 func GetUsers(ctx context.Context, openids []string) (users map[string]*UsersRow, err error) {
+	for i, openid := range openids {
+		openids[i] = fmt.Sprintf("'%s'", openid)
+	}
 	query := fmt.Sprintf(`select openid,username,avatar,height,weight,age,length,weixin_id from users where openid in (%s)`, strings.Join(openids, ","))
 	log.Printf("GetUsers opendis:%v query:%s", openids, query)
 	rows, err := mysqlCli.QueryContext(ctx, query)
