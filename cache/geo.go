@@ -46,7 +46,7 @@ func GetUsersByGeo(ctx context.Context, filter *GeoFilter) (usergeos map[string]
 		WithDist:    false,
 		WithGeoHash: false,
 		Count:       0,
-		Sort:        "",
+		Sort:        "ASC",
 		Store:       "",
 		StoreDist:   "",
 	}

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,26 +26,23 @@ func UploadGeo(ctx *gin.Context) {
 	param := UploadGeoRequest{}
 	err := ctx.ShouldBindJSON(&param)
 	if err != nil {
+		log.Printf("UploadGeo param:%+v %s", param, err)
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
 	param.Openid = ctx.GetString("openid")
 	// 位置信息发送到nsq
 	// nsq消费者单独处理
+	log.Printf("UploadGeo param:%+v", param)
 
-	body, err := json.Marshal(&param)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, nil)
-		return
-	}
 	// 保存位置信息
-	log.Printf("UploadGeo %+v", string(body))
 	err = cache.AddUserGeo(ctx, &cache.UserGeo{
 		Openid:    param.Openid,
 		Latitude:  param.Latitude,
 		Longitude: param.Longitude,
 	})
 	if err != nil {
+		log.Printf("UploadGeo param:%+v %s", param, err)
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
