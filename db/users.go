@@ -31,7 +31,7 @@ type UsersRow struct {
 }
 
 func InsertUsers(ctx context.Context, rows *UsersRow) (sql.Result, error) {
-	query := "INSERT INTO users (openid,session_key) VALUES (?,?) ON DUPLICATE KEY UPDATE openid=values(openid), session_key=values(session_key)"
+	query := "INSERT INTO users (openid,session_key) VALUES (?,?) ON DUPLICATE KEY UPDATE session_key=values(session_key)"
 	return mysqlCli.ExecContext(ctx, query, rows.Openid, rows.SessionKey)
 }
 
