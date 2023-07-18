@@ -12,9 +12,6 @@ import (
 
 const RedisPrefixKey = "cos::auth::%s::%s" // cos授权 cos::auth::[situation]::[openid]
 
-type CosAuth struct {
-}
-
 type Situation string
 
 const SituationUploadAvatar Situation = "UploadAvatar"

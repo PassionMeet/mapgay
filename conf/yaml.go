@@ -34,10 +34,17 @@ type Redis struct {
 	Auth string `yaml:"auth"`
 }
 
+type CosBucket struct {
+	BucketName string `yaml:"bucket_name"`
+	Region     string `yaml:"region"`
+	Appid      string `yaml:"appid"`
+}
+
 type Cos struct {
-	Url       string `yaml:"url"`
-	SecretID  string `yaml:"secret_id"`
-	SecretKey string `yaml:"secret_key"`
+	Url       string               `yaml:"url"`
+	SecretID  string               `yaml:"secret_id"`
+	SecretKey string               `yaml:"secret_key"`
+	Buckets   map[string]CosBucket `yaml:"buckets"`
 }
 
 type Config struct {

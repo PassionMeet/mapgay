@@ -33,10 +33,15 @@ func GetCosAuth(ctx *gin.Context) {
 	}
 	log.Printf("GetCosAuth cache.HGetCosAuth situation:%s %s", cache.SituationUploadAvatar, err)
 	// redis中未获取到，使用Cos工具进行授权
-	cosRegion := storage.AvatarCosRegion + "/" + "openid" + ".jpg"
-	authVal, err = storage.GetCosStsCredential(conf.Get().Cos, cosRegion, openid)
+	avatarCosConf, ok := conf.Get().Cos.Buckets["avatar"]
+	if !ok {
+		log.Printf("GetCosAuth conf.Get().Cos.Buckets %s not existed", "avatar")
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	authVal, err = storage.GetCosStsCredential(conf.Get().Cos, avatarCosConf.BucketName, avatarCosConf.Appid, avatarCosConf.Region, openid)
 	if err != nil {
-		log.Printf("GetCosAuth storage.GetCosStsCredential %+v %s %s", conf.Get().Cos, cosRegion, err)
+		log.Printf("GetCosAuth storage.GetCosStsCredential %+v %s", conf.Get().Cos, err)
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}
