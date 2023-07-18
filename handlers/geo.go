@@ -80,7 +80,7 @@ func GetUsersByGeo(ctx *gin.Context) {
 	}
 	openid := ctx.GetString("openid")
 	// 通过geo信息筛选出当前地图中所有用户
-	// TODO 时间筛选
+	// 时间筛选
 	filter := &cache.GeoFilter{
 		Openid: openid,
 	}
@@ -117,8 +117,5 @@ func GetUsersByGeo(ctx *gin.Context) {
 		}
 		resp.List = append(resp.List, item)
 	}
-	// TODO 通过user_id计算当前用户与地图中用户的所有匹配值，筛出匹配度较高用户
-	// TODO 考虑做后期离线计算
-	// TODO 考虑用户标记自己所在的大范围，只收集在同一个大范围内的用户，并异步做匹配值计算任务
 	ctx.JSON(http.StatusOK, nil)
 }
