@@ -15,14 +15,12 @@ import (
 	"github.com/cmfunc/jipeng/conf"
 	"github.com/cmfunc/jipeng/db"
 	"github.com/cmfunc/jipeng/router"
-	"github.com/cmfunc/jipeng/storage"
 )
 
 func main() {
 	conf.ParseJipengConf()
 	cache.Init(conf.Get().Redis)
 	db.InitMySQL(conf.Get().MySQL)
-	storage.InitCos(conf.Get().Cos)
 
 	engine := gin.Default()
 	router.Inject(engine)

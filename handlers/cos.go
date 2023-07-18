@@ -11,14 +11,13 @@ import (
 )
 
 type GetCosAuthRequest struct {
-	Bucket string `form:"bucket,omitempty"`
-	Region string `form:"region,omitempty"`
+	Situation string `form:"situation,omitempty"`
 }
 
 // GetCosAuth 获取cos授权
 func GetCosAuth(ctx *gin.Context) {
 	param := GetCosAuthRequest{}
-	err := ctx.BindJSON(&param)
+	err := ctx.Bind(&param)
 	if err != nil {
 		log.Printf("GetCosAuth param:%+v %s", param, err)
 		ctx.JSON(http.StatusBadRequest, nil)
@@ -33,12 +32,7 @@ func GetCosAuth(ctx *gin.Context) {
 	}
 	log.Printf("GetCosAuth cache.HGetCosAuth situation:%s %s", cache.SituationUploadAvatar, err)
 	// redis中未获取到，使用Cos工具进行授权
-	avatarCosConf, ok := conf.Get().Cos.Buckets["avatar"]
-	if !ok {
-		log.Printf("GetCosAuth conf.Get().Cos.Buckets %s not existed", "avatar")
-		ctx.JSON(http.StatusInternalServerError, nil)
-		return
-	}
+	avatarCosConf := conf.Get().Cos.Avatar
 	authVal, err = storage.GetCosStsCredential(conf.Get().Cos, avatarCosConf.BucketName, avatarCosConf.Appid, avatarCosConf.Region, openid)
 	if err != nil {
 		log.Printf("GetCosAuth storage.GetCosStsCredential %+v %s", conf.Get().Cos, err)

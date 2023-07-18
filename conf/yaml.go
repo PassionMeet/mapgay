@@ -1,6 +1,8 @@
 package conf
 
 import (
+	"log"
+
 	"github.com/spf13/viper"
 )
 
@@ -35,23 +37,22 @@ type Redis struct {
 }
 
 type CosBucket struct {
-	BucketName string `yaml:"bucket_name"`
+	BucketName string `yaml:"bucketName"`
 	Region     string `yaml:"region"`
 	Appid      string `yaml:"appid"`
 }
 
 type Cos struct {
-	Url       string               `yaml:"url"`
-	SecretID  string               `yaml:"secret_id"`
-	SecretKey string               `yaml:"secret_key"`
-	Buckets   map[string]CosBucket `yaml:"buckets"`
+	SecretID  string    `yaml:"secretID"`
+	SecretKey string    `yaml:"secretKey"`
+	Avatar    CosBucket `yaml:"avatar"`
 }
 
 type Config struct {
-	Wx    *Wx    `yaml:"wx"`
-	MySQL *MySQL `yaml:"mysql"`
-	Redis *Redis `yaml:"redis"`
-	Cos   *Cos   `yaml:"cos"`
+	Wx    Wx    `yaml:"wx"`
+	MySQL MySQL `yaml:"mysql"`
+	Redis Redis `yaml:"redis"`
+	Cos   Cos   `yaml:"cos"`
 }
 
 func ParseJipengConf() {
@@ -66,5 +67,5 @@ func ParseJipengConf() {
 	if err != nil {
 		panic(err)
 	}
-
+	log.Printf("_config cos %+v", _config.Cos)
 }

@@ -117,5 +117,5 @@ func GetUsersByGeo(ctx *gin.Context) {
 		}
 		resp.List = append(resp.List, item)
 	}
-	ctx.JSON(http.StatusOK, nil)
+	ctx.JSON(http.StatusOK, resp)
 }

@@ -30,7 +30,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	wxsession, err := wx.Login(ctx, *conf.Get().Wx, param.Code)
+	wxsession, err := wx.Login(ctx, conf.Get().Wx, param.Code)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return

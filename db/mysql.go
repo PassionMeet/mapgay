@@ -11,7 +11,7 @@ import (
 
 var mysqlCli *sql.DB
 
-func InitMySQL(cfg *conf.MySQL) {
+func InitMySQL(cfg conf.MySQL) {
 	var err error
 	var uri = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local",
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)
