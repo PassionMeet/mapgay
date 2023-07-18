@@ -26,7 +26,7 @@ func GetCosAuth(ctx *gin.Context) {
 	}
 	openid := ctx.GetString("openid")
 	// 获取redis中，cos授权
-	authVal, err := cache.HGetCosAuth(ctx, cache.SituationUploadAvatar)
+	authVal, err := cache.GetCosAuth(ctx, cache.SituationUploadAvatar, openid)
 	if err == nil && authVal != nil {
 		ctx.JSON(http.StatusOK, authVal)
 		return
@@ -37,6 +37,13 @@ func GetCosAuth(ctx *gin.Context) {
 	authVal, err = storage.GetCosStsCredential(conf.Get().Cos, cosRegion, openid)
 	if err != nil {
 		log.Printf("GetCosAuth storage.GetCosStsCredential %+v %s %s", conf.Get().Cos, cosRegion, err)
+		ctx.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	// 设置缓存
+	err = cache.SetCosAuth(ctx, cache.SituationUploadAvatar, openid, authVal)
+	if err != nil {
+		log.Printf("GetCosAuth storage.SetCosAuth %+v %s %s %s", authVal, cache.SituationUploadAvatar, openid, err)
 		ctx.JSON(http.StatusInternalServerError, nil)
 		return
 	}

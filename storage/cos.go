@@ -33,12 +33,12 @@ func InitCos(config *conf.Cos) {
 
 }
 
-func GetCosStsCredential(config *conf.Cos, cosRegion, openid string) (*sts.Credentials, error) {
+func GetCosStsCredential(config *conf.Cos, cosRegion, openid string) (*sts.CredentialResult, error) {
 	c := sts.NewClient(config.SecretID, config.SecretKey, nil)
 	// 策略概述 https://cloud.tencent.com/document/product/436/18023
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(time.Hour.Seconds()),
-		Region:          "ap-guangzhou",
+		Region:          "ap-beijing",
 		Policy: &sts.CredentialPolicy{
 			Statement: []sts.CredentialPolicyStatement{
 				{
@@ -73,5 +73,5 @@ func GetCosStsCredential(config *conf.Cos, cosRegion, openid string) (*sts.Crede
 	}
 	fmt.Printf("%+v\n", res)
 	fmt.Printf("%+v\n", res.Credentials)
-	return res.Credentials, nil
+	return res, nil
 }
