@@ -1,8 +1,6 @@
 package conf
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 )
 
@@ -67,5 +65,4 @@ func ParseJipengConf() {
 	if err != nil {
 		panic(err)
 	}
-	log.Printf("_config cos %+v", _config.Cos)
 }

@@ -19,7 +19,12 @@ const SituationUploadAvatarExpiration time.Duration = time.Hour * 2
 
 func GetCosAuth(ctx context.Context, situation Situation, openid string) (val *sts.CredentialResult, err error) {
 	key := fmt.Sprintf(RedisPrefixKey, situation, openid)
-	err = redisClient.Get(ctx, key).Scan(val)
+	valStr, err := redisClient.Get(ctx, key).Result()
+	if err != nil {
+		return nil, err
+	}
+	val = &sts.CredentialResult{}
+	err = json.Unmarshal([]byte(valStr), val)
 	if err != nil {
 		return nil, err
 	}
