@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func v1Router(g *gin.RouterGroup) {
+func miniRouter(g *gin.RouterGroup) {
 	g.POST("/login", minihandlers.Login)                 //login
 	g.Use(minihandlers.AuthMidd)                         //auth middleware
 	g.POST("/geo", minihandlers.UploadGeo)               //upload user's geo location
