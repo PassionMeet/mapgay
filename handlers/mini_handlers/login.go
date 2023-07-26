@@ -1,4 +1,4 @@
-package handlers
+package minihandlers
 
 import (
 	"fmt"
@@ -13,6 +13,13 @@ import (
 
 type LoginRequest struct {
 	Code string `json:"code"`
+}
+
+type Userinfo struct {
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Feature  string `json:"feature"`
+	WeixinID string `json:"weixinID"`
 }
 
 type LoginResponse struct {

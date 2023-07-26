@@ -1,15 +1,16 @@
 package router
 
 import (
-	"github.com/cmfunc/jipeng/handlers"
+	minihandlers "github.com/cmfunc/jipeng/handlers/mini_handlers"
 	"github.com/gin-gonic/gin"
 )
 
 func v1Router(g *gin.RouterGroup) {
-	g.POST("/login", handlers.Login)              //login
-	g.Use(handlers.AuthMidd)                      //auth middleware
-	g.POST("/geo", handlers.UploadGeo)            //upload user's geo location
-	g.GET("/users/geo", handlers.GetUsersByGeo)   //get users by geo
-	g.POST("/user/info", handlers.UploadUserinfo) //upload user self userinfo
-	g.GET("/cos/auth", handlers.GetCosAuth)       //get tencent auth's key
+	g.POST("/login", minihandlers.Login)                 //login
+	g.Use(minihandlers.AuthMidd)                         //auth middleware
+	g.POST("/geo", minihandlers.UploadGeo)               //upload user's geo location
+	g.GET("/users/geo", minihandlers.GetUsersByGeo)      //get users by geo
+	g.POST("/user/info", minihandlers.UploadUserinfo)    //upload user self userinfo
+	g.GET("/cos/auth", minihandlers.GetCosAuth)          //get tencent auth's key
+	g.POST("/leave/message", minihandlers.LeaveAMessage) //leave a message for user
 }

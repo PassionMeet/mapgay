@@ -1,4 +1,4 @@
-package handlers
+package minihandlers
 
 import (
 	"log"

@@ -1,4 +1,4 @@
-package handlers
+package minihandlers
 
 type Wrong string
 

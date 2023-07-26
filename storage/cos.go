@@ -17,7 +17,7 @@ func GetCosStsCredential(config conf.Cos, bucketName, appid, region, openid, fil
 	source := fmt.Sprintf("qcs::cos:%s:uid/%s:%s-%s/%s.%s", region, appid, bucketName, appid, openid, fileExt)
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(2 * time.Hour.Seconds()),
-		Region:          "ap-beijing",
+		Region:          region,
 		Policy: &sts.CredentialPolicy{
 			Statement: []sts.CredentialPolicyStatement{
 				{
