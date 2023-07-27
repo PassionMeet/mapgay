@@ -11,6 +11,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	_ "net/http/pprof"
+
 	"github.com/cmfunc/jipeng/cache"
 	"github.com/cmfunc/jipeng/conf"
 	"github.com/cmfunc/jipeng/db"
@@ -18,6 +20,9 @@ import (
 )
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe(":6060", nil))
+	}()
 	conf.ParseJipengConf()
 	cache.Init(conf.Get().Redis)
 	db.InitMySQL(conf.Get().MySQL)
