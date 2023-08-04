@@ -1,0 +1,1 @@
+# deploy mapgay server depend on docker
