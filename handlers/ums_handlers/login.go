@@ -1,7 +1,11 @@
 package umshandlers
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
 
-func Login(c *gin.Context)  {
-	
+	"github.com/gin-gonic/gin"
+)
+
+func Login(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"66": "666"})
 }
