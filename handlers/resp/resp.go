@@ -1,4 +1,4 @@
-package minihandlers
+package resp
 
 type Resp struct {
 	Code uint32      `json:"code"`

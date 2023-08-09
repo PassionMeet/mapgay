@@ -1,4 +1,4 @@
-package minihandlers
+package resp
 
 type Wrong string
 
