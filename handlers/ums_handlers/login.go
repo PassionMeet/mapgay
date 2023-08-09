@@ -6,6 +6,7 @@ import (
 
 	"github.com/cmfunc/jipeng/cache"
 	"github.com/cmfunc/jipeng/db"
+	"github.com/cmfunc/jipeng/pkg/password"
 	"github.com/cmfunc/jipeng/pkg/usertoken"
 	"github.com/gin-gonic/gin"
 )
@@ -30,8 +31,8 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
-	if param.Password != row.Password {
-		log.Printf("Login param:%+v row.password:%s", param, row.Password)
+	if !password.CheckPasswordHash(param.Password, row.Password) {
+		log.Printf("Login auth failed param:%+v row.password:%s", param, row.Password)
 		c.JSON(http.StatusUnauthorized, nil)
 		return
 	}
