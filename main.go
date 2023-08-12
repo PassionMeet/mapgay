@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,8 +30,9 @@ func main() {
 
 	engine := gin.Default()
 	router.Inject(engine)
+	addr := fmt.Sprintf("%s:%d", conf.Get().Server.Host, conf.Get().Server.Port)
 	srv := &http.Server{
-		Addr:              ":7777",
+		Addr:              addr,
 		Handler:           engine,
 		ReadTimeout:       10 * time.Second,
 		ReadHeaderTimeout: 10 * time.Second,

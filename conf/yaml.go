@@ -47,10 +47,11 @@ type Cos struct {
 }
 
 type Config struct {
-	Wx    Wx    `yaml:"wx"`
-	MySQL MySQL `yaml:"mysql"`
-	Redis Redis `yaml:"redis"`
-	Cos   Cos   `yaml:"cos"`
+	Wx     Wx     `yaml:"wx"`
+	MySQL  MySQL  `yaml:"mysql"`
+	Redis  Redis  `yaml:"redis"`
+	Cos    Cos    `yaml:"cos"`
+	Server Server `yaml:"server"`
 }
 
 func ParseJipengConf() {
